@@ -1,6 +1,9 @@
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
+
 from sqlalchemy.orm import validates
+import datetime
 import re
 
 db = SQLAlchemy()
@@ -14,6 +17,8 @@ class User(db.model, SerializerMixin):
   email = db.column(db.String, nullable=False)
   phone_number = db.column(db.integer, nullable=False)
   password = db.column(db.String, nullable=False)
+  payments = db.relationship('payments', back_populates = 'users', cascades = 'all, delete-orphan')
+  serialize_rules = ('payments.users')
 
 @validates('full_name')
 def validates_full_name(self, key,  full_name):
@@ -60,3 +65,17 @@ def validates_password(self, key, password):
 
 def __repr__(self):
     return f'<User {self.id} - {self.full_name}>'
+
+class Payment(db.Model, SerializerMixin):
+   __tablename__ = 'payments'
+
+   id = db.Column(db.Integer, primary_key=True)
+   date_payed = db.Column(db.datetime, nullable=False)
+   amount = db.Column(db.Integer, nullable=False)
+   amount_due = db.Column(db.Integer, nullable=False)
+   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+   users = db.relationship('users', back_populates = 'payments', cascades = 'all, delete-orphan')
+   serialize_rules = ('-users.payments',) 
+
+   def __repr__(self):
+      return f'<Payment {self.id} - {self.date_payed}>'
