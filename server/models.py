@@ -56,3 +56,7 @@ def validates_password(self, key, password):
   if not re.match(password_pattern, password):
     raise ValueError("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character")
   return password
+
+
+def __repr__(self):
+    return f'<User {self.id} - {self.full_name}>'
