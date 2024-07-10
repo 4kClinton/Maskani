@@ -13,10 +13,10 @@ class User(db.model, SerializerMixin):
   __tablename__ = 'users'
 
   id = db.Column(db.Integer, primary_key=True)
-  full_name = db.column(db.String, nullable=False)
-  email = db.column(db.String, nullable=False)
-  phone_number = db.column(db.integer, nullable=False)
-  password = db.column(db.String, nullable=False)
+  full_name = db.Column(db.String, nullable=False)
+  email = db.Column(db.String, nullable=False)
+  phone_number = db.Column(db.integer, nullable=False)
+  password = db.Column(db.String, nullable=False)
   payments = db.relationship('payments', back_populates = 'users', cascades = 'all, delete-orphan')
   serialize_rules = ('payments.users')
 
@@ -62,9 +62,27 @@ def validates_password(self, key, password):
     raise ValueError("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character")
   return password
 
-
 def __repr__(self):
     return f'<User {self.id} - {self.full_name}>'
+
+class Tenant(db.Model, SerializerMixin):
+   __tablename__ = 'tenants'
+
+   id = db.Column(db.Integer, primary_key=True)
+   name = db.Column(db.String, nullable=False)
+   number = db.Column(db.Integer, nullable=False)
+   id_number = db.Column(db.Integer, nullable=False)
+   house_number = db.Column(db.Integer, nullable=False)
+   user_id = db.Column(db.integer, db.ForeignKey("user.id"))
+   users = db.relationship('users', back_populates='tenants', cascade='all, delete-orphan')
+
+   serialize_rules = ('-users.properties')
+
+
+   def _repr_(self):
+      return f'<Tenant {self.id}, {self.name}, {self.number}>'   
+
+
 
 class Payment(db.Model, SerializerMixin):
    __tablename__ = 'payments'
