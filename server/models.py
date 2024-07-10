@@ -79,3 +79,18 @@ class Payment(db.Model, SerializerMixin):
 
    def __repr__(self):
       return f'<Payment {self.id} - {self.date_payed}>'
+      
+class Property(db.Model):
+   __tablename__= 'properties'
+   
+   id = db.Column(db.Integer, primary_key=True)
+   name = db.Column(db.String ,nullable=False)
+  #  address = db.Column(db.String, nullable=False)
+   location = db.Column(db.String, nullable=False)
+   owner = db.Column(db.String, nullable=False)
+   payments = db.relationship('Payment', back_populates='properties',  cascades = 'all, delete-orphan')
+   serialize_rules = ('-payments.properties',)
+
+   def __repr__(self):
+      return f'<Property {self.id} - {self.name}>'
+    
