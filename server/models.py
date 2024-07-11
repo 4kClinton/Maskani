@@ -1,15 +1,16 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
+from config import app, db
 import re
 
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String, nullable=False)
+    full_name = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
