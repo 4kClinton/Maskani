@@ -75,7 +75,24 @@ class Payment(db.Model, SerializerMixin):
    amount_due = db.Column(db.Integer, nullable=False)
    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
    users = db.relationship('users', back_populates = 'payments', cascades = 'all, delete-orphan')
-   serialize_rules = ('-users.payments',) 
+   serialize_rules = ('-users.payments',)
 
-   def __repr__(self):
+@validates('date_payed')
+def validate_date_payed(self, key, date_payed):
+        if not isinstance(date_payed, datetime):
+            raise ValueError("date_payed must be a datetime object")
+        return date_payed
+
+@validates('amount', 'amount_due')
+def validate_amounts(self, key, value):
+        if not isinstance(value, int) or value < 0:
+            raise ValueError(f"{key} must be a positive integer")
+        return value
+
+@validates('user_id')
+def validate_user_id(self, key, user_id):
+        if not isinstance(user_id, int) or user_id <= 0:
+            raise ValueError("user_id must be a positive integer")
+        return user_id
+def __repr__(self):
       return f'<Payment {self.id} - {self.date_payed}>'
