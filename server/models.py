@@ -1,10 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
-from config import app, db
+from config import db
 import re
-
-db = SQLAlchemy(app)
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -15,7 +13,8 @@ class User(db.Model, SerializerMixin):
     phone_number = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
     payments = db.relationship('Payment', back_populates='user', cascade='all, delete-orphan')
-    serialize_rules = ('-payments.user',)
+    tenants = db.relationship('Tenant', back_populates='user', cascade='all, delete-orphan')
+    serialize_rules = ('-payments.user', '-tenants.user')
 
     @validates('full_name')
     def validate_full_name(self, key, full_name):
@@ -56,7 +55,8 @@ class User(db.Model, SerializerMixin):
             'full_name': self.full_name,
             'email': self.email,
             'phone_number': self.phone_number,
-            'payments': [payment.to_dict() for payment in self.payments]
+            'payments': [payment.to_dict() for payment in self.payments],
+            'tenants': [tenant.to_dict() for tenant in self.tenants]
         }
 
     def __repr__(self):
@@ -67,11 +67,11 @@ class Tenant(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    number = db.Column(db.Integer, nullable=False)
+    phone_number = db.Column(db.String, nullable=False)
     id_number = db.Column(db.Integer, nullable=False)
     house_number = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    user = db.relationship('User', back_populates='tenants', cascade='all, delete-orphan')
+    user = db.relationship('User', back_populates='tenants')
 
     serialize_rules = ('-user.tenants',)
 
@@ -81,7 +81,7 @@ class Tenant(db.Model, SerializerMixin):
             raise ValueError("Name must be between 1 and 100 characters long")
         return name
 
-    @validates('number', 'id_number', 'house_number', 'user_id')
+    @validates('phone_number', 'id_number', 'house_number', 'user_id')
     def validate_numbers(self, key, value):
         if value < 1 or value > 9999999999:
             raise ValueError(f"{key.capitalize()} must be between 1 and 9999999999")
@@ -91,14 +91,14 @@ class Tenant(db.Model, SerializerMixin):
         return {
             'id': self.id,
             'name': self.name,
-            'number': self.number,
+            'phone_number': self.phone_number,
             'id_number': self.id_number,
             'house_number': self.house_number,
             'user_id': self.user_id
         }
 
     def __repr__(self):
-        return f'<Tenant {self.id}, {self.name}, {self.number}>'
+        return f'<Tenant {self.id}, {self.name}, {self.phone_number}>'
 
 class Payment(db.Model, SerializerMixin):
     __tablename__ = 'payments'
@@ -108,7 +108,7 @@ class Payment(db.Model, SerializerMixin):
     amount = db.Column(db.Integer, nullable=False)
     amount_due = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship('User', back_populates='payments', cascade='all, delete-orphan')
+    user = db.relationship('User', back_populates='payments')
     serialize_rules = ('-user.payments',)
 
     def to_dict(self):
