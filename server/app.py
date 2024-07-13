@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from models import db, User
+from models import db, User, Tenant, Payment
 
 
 app  = Flask(__name__)
@@ -23,7 +23,7 @@ def login():
   full_name = request.json.get('full_name', None)
   password = request.json.get('password', None)
 
-  user = User.query.filter(full_name=full_name).first()
+  user = User.query.filter_by(full_name=full_name).first()
   if user and bcrypt.check_password_hash(user.password, password):
     access_token = create_access_token(identity=user.id)
     return jsonify({"access_token": access_token}), 200
@@ -82,5 +82,69 @@ def update_user(user_id):
     db.session.commit()
     return jsonify({'message': 'User updated successfully'})
 
+# Delete user
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted successfully'})
 
+#Tenant
+#add Tenant
+@app.route('/tenants', methods=['POST'])
+@jwt_required()
+def create_tenant():
+    data = request.get_json()
+    new_tenant = Tenant(name=data['name'], phone_number=data['number'], id_number=data['id_number'], house_number=data['house_number'], user_id=get_jwt_identity()) 
+    db.session.add(new_tenant)
+    db.session.commit()
+    return jsonify({'success': 'Tenant created successfully'}), 201
+
+# Get single tenant
+@app.route('/tenants/<int:tenant_id>', methods=['GET'])
+@jwt_required()
+def get_tenant(tenant_id):
+    tenant = Tenant.query.get_or_404(tenant_id)
+    return jsonify({'id': tenant.id, 'name': tenant.name, 'phone_number': tenant.phone_number, 'id_number': tenant.id_number, 'house_number': tenant.house_number, 'user_id': tenant.user_id})
+
+# Update tenant
+@app.route('/tenants/<int:tenant_id>', methods=['PUT'])
+@jwt_required()
+def update_tenant(tenant_id):
+    tenant = Tenant.query.get_or_404(tenant_id)
+    data = request.get_json()
+
+    tenant.name = data['name']
+    tenant.phone_number = data['phone_number']
+    tenant.id_number = data['id_number']
+    tenant.house_number = data['house_number']
+    db.session.commit()
+    return jsonify({'message': 'Tenant updated successfully'})
+
+#Delete tenant
+@app.route('/tenants/<int:tenant_id>', methods=['DELETE'])
+@jwt_required()
+def delete_tenant(tenant_id):
+    tenant = Tenant.query.get_or_404(tenant_id)
+    db.session.delete(tenant)
+    db.session.commit()
+    return jsonify({'message': 'Tenant deleted successfully'})
+
+#Payment
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
