@@ -1,66 +1,50 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_serializer import SerializerMixin
-from sqlalchemy.orm import validates
-from config import db
-import re
+from config import db, bcrypt
+from datetime import datetime
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String, unique=True, nullable=False)
-    email = db.Column(db.String, nullable=False)
+    full_name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    payments = db.relationship('Payment', back_populates='user', cascade='all, delete-orphan')
+    _password_hash = db.Column(db.String, nullable=False)
     tenants = db.relationship('Tenant', back_populates='user', cascade='all, delete-orphan')
-    serialize_rules = ('-payments.user', '-tenants.user')
+    properties = db.relationship('Property', back_populates='user', cascade='all, delete-orphan')
+    payments = db.relationship('Payment', back_populates='user', cascade='all, delete-orphan')
 
-    @validates('full_name')
-    def validate_full_name(self, key, full_name):
-        if not full_name:
-            raise ValueError("Full name must be provided")
-        elif User.query.filter(User.full_name == full_name).first():
-            raise ValueError("Full name must be unique")
-        return full_name
+    tenant_names = association_proxy('tenants', 'name')
+    property_names = association_proxy('properties', 'name')
+    payment_amounts = association_proxy('payments', 'amount')
 
-    @validates('email')
-    def validate_email(self, key, email):
-        if not email:
-            raise ValueError("Email must be provided")
-        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        if not re.match(email_pattern, email):
-            raise ValueError("Invalid email address")
-        return email
+    @hybrid_property
+    def password(self):
+        raise AttributeError('Password is not a readable attribute')
 
-    @validates('phone_number')
-    def validate_phone_number(self, key, phone_number):
-        digits = ''.join(filter(str.isdigit, phone_number))
-        if len(digits) != 10:
-            raise ValueError("Phone number must be 10 digits")
-        return phone_number
+    @password.setter
+    def password(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password_hash = password_hash.decode("utf-8")
 
-    @validates('password')
-    def validate_password(self, key, password):
-        if not password:
-            raise ValueError("Password cannot be empty")
-        password_pattern = r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
-        if not re.match(password_pattern, password):
-            raise ValueError("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character")
-        return password
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'full_name': self.full_name,
-            'email': self.email,
-            'phone_number': self.phone_number,
-            'payments': [payment.to_dict() for payment in self.payments],
-            'tenants': [tenant.to_dict() for tenant in self.tenants]
-        }
+    serialize_rules = ('-payments.user', '-tenants.user', '-properties.user')
+
+    def __init__(self, full_name, email, phone_number, password):
+        self.full_name = full_name
+        self.email = email
+        self.phone_number = phone_number
+        self.password = password
+
+    def is_active(self):
+        return True
 
     def __repr__(self):
-        return f'<User {self.id} - {self.full_name}>'
+        return f'<User id={self.id}, full_name={self.full_name}, email={self.email}, phone_number={self.phone_number}>'
 
 class Tenant(db.Model, SerializerMixin):
     __tablename__ = 'tenants'
@@ -68,77 +52,53 @@ class Tenant(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
-    id_number = db.Column(db.Integer, nullable=False)
-    house_number = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    id_number = db.Column(db.String, nullable=False)
+    house_number = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user = db.relationship('User', back_populates='tenants')
 
-    serialize_rules = ('-user.tenants',)
+    maintenances = db.relationship('Maintenance', back_populates='tenant', cascade='all, delete-orphan')
 
-    @validates('name')
-    def validate_name(self, key, name):
-        if not name or len(name) > 100:
-            raise ValueError("Name must be between 1 and 100 characters long")
-        return name
+    payments = db.relationship('Payment', back_populates='tenant', cascade='all, delete-orphan')
 
-    @validates('phone_number', 'id_number', 'house_number', 'user_id')
-    def validate_numbers(self, key, value):
-        if value < 1 or value > 9999999999:
-            raise ValueError(f"{key.capitalize()} must be between 1 and 9999999999")
-        return value
+    serialize_rules = ('-user.tenants', '-maintenances.tenant', '-payments.tenant')
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'phone_number': self.phone_number,
-            'id_number': self.id_number,
-            'house_number': self.house_number,
-            'user_id': self.user_id
-        }
+    def __init__(self, name, phone_number, id_number, house_number, user_id):
+        self.name = name
+        self.phone_number = phone_number
+        self.id_number = id_number
+        self.house_number = house_number
+        self.user_id = user_id
 
     def __repr__(self):
-        return f'<Tenant {self.id}, {self.name}, {self.phone_number}>'
+        return f'<Tenant id={self.id}, name={self.name}, phone_number={self.phone_number}, id_number={self.id_number}, house_number={self.house_number}>'
 
 class Payment(db.Model, SerializerMixin):
     __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
-    date_payed = db.Column(db.DateTime, nullable=False)
+    date_payed = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     amount = db.Column(db.Integer, nullable=False)
     amount_due = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False)
+    property_id = db.Column(db.Integer, db.ForeignKey('properties.id'), nullable=False)
+    property = db.relationship('Property', back_populates='payments')
     user = db.relationship('User', back_populates='payments')
-    serialize_rules = ('-user.payments',)
+    tenant = db.relationship('Tenant', back_populates='payments')
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'date_payed': self.date_payed,
-            'amount': self.amount,
-            'amount_due': self.amount_due,
-            'user_id': self.user_id
-        }
+    serialize_rules = ('-user.payments', '-property.payments', '-tenant.payments')
 
-    @validates('date_payed')
-    def validate_date_payed(self, key, date_payed):
-            if not isinstance(date_payed, datetime):
-                raise ValueError("date_payed must be a datetime object")
-            return date_payed
+    def __init__(self, date_payed, amount, amount_due, user_id, tenant_id, property_id):
+        self.date_payed = date_payed
+        self.amount = amount
+        self.amount_due = amount_due
+        self.user_id = user_id
+        self.tenant_id = tenant_id
+        self.property_id = property_id
 
-    @validates('amount', 'amount_due')
-    def validate_amounts(self, key, value):
-            if not isinstance(value, int) or value < 0:
-                raise ValueError(f"{key} must be a positive integer")
-            return value
-
-    @validates('user_id')
-    def validate_user_id(self, key, user_id):
-            if not isinstance(user_id, int) or user_id <= 0:
-                raise ValueError("user_id must be a positive integer")
-            return user_id
     def __repr__(self):
-          return f'<Payment {self.id} - {self.date_payed}>'    
+        return f'<Payment id={self.id}, date_payed={self.date_payed}, amount={self.amount}, amount_due={self.amount_due}>'
 
 
 class Property(db.Model, SerializerMixin):
@@ -148,17 +108,45 @@ class Property(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=False)
     owner = db.Column(db.String, nullable=False)
-    payments = db.relationship('Payment', back_populates='property', cascade='all, delete-orphan')
-    serialize_rules = ('-payments.property',)
+    image = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship('User', back_populates='properties')
+    payments = db.relationship('Payment', back_populates='property', cascade='all, delete-orphan', single_parent=True)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'location': self.location,
-            'owner': self.owner,
-            'payments': [payment.to_dict() for payment in self.payments]
-        }
+    serialize_rules = ('-payments.property', '-user.properties',)
+
+    def __init__(self, name, location, owner, user_id, image):
+        self.name = name
+        self.location = location
+        self.owner = owner
+        self.user_id = user_id
+        self.image = image
 
     def __repr__(self):
-        return f'<Property {self.id} - {self.name}>'
+        return f'<Property id={self.id}, name={self.name}, location={self.location}, owner={self.owner}>'
+
+class Maintenance(db.Model, SerializerMixin):
+    __tablename__ = 'maintenances'
+
+    id = db.Column(db.Integer, primary_key=True)
+    issue_type = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    contact_information = db.Column(db.String)
+    tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=False)
+    tenant = db.relationship('Tenant', back_populates='maintenances')
+
+    serialize_rules = ('-tenant.maintenances',)  # Only include maintenance details for tenants
+
+    def __init__(self, issue_type, description, contact_information, tenant_id, date_created=None):
+        self.issue_type = issue_type
+        self.description = description
+        self.contact_information = contact_information
+        self.tenant_id = tenant_id
+        if date_created is None:
+            self.date_created = datetime.utcnow()
+        else:
+            self.date_created = date_created
+
+    def __repr__(self):
+        return f'<Maintenance id={self.id}, issue_type={self.issue_type}, description={self.description}, contact={self.contact_information}>'
