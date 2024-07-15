@@ -1,30 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, ListAlt, AddCircle } from '@mui/icons-material';
-
+import { Home as HomeIcon, AddCircle, Build, Person } from '@mui/icons-material';
 
 const BottomNavBar = () => {
+  const handleClick = (label) => {
+    console.log(`${label} clicked`);
+  };
+
   return (
     <div id='bottomNav'>
-
-    <nav className="bottom-nav">
-        <Link to="/" className="nav-item">
-            <Home />
-            <span>Tenants</span>
+      <nav className="bottom-nav">
+        <Link to="/home" className="nav-item" onClick={() => handleClick('Home')}>
+          <HomeIcon />
+          <span>Home</span>
         </Link>
-        <Link to="/properties" className="nav-item">
-            <ListAlt />
-            <span>Properties</span>
+        <Link to="/payments" className="nav-item" onClick={() => handleClick('Payments')}>
+          <AddCircle />
+          <span>Payments</span>
         </Link>
-        <Link to="/add-property" className="nav-item">
-            <AddCircle />
-            <span>payments</span>
+        <Link to="/maintenance" className="nav-item" onClick={() => handleClick('Maintenance')}>
+          <Build />
+          <span>Maintenance</span>
         </Link>
-        </nav>
-
-
+        <Link to="/profile" className="nav-item" onClick={() => handleClick('Profile')}>
+          <Person />
+          <span>Profile</span>
+        </Link>
+      </nav>
     </div>
-   
   );
 };
 

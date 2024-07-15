@@ -1,48 +1,16 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
-/* Basic styling for the app */
+/* Global Styles */
 body {
-  background-color: #f0f4f8;
-  font-family: Arial, sans-serif;
+  background-color: #f5f6f7;
+  /* Light gray background similar to Bolt */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Clean sans-serif font */
+  margin: 0;
+  padding: 0;
+}
+
+#header {
+  width: 90%;
+  margin: 3vh auto;
 }
 
 .header-content {
@@ -52,114 +20,307 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #2c7a7b;
+  background-color: #212121;
+  /* Change to Bolt's primary color if needed */
   color: white;
 }
-.header-content img{
-  width:10vh;
+
+.header-content img {
+  width: 10vh;
   border-radius: 50%;
 }
 
-
-.property-card,
-.property-list {
+.header-left,
+.header-center,
+.header-right {
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  margin: 1rem;
+  align-items: center;
 }
 
-.property-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
+.header-center {
+  justify-content: center;
 }
 
-.property-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.header-right {
+  justify-content: flex-end;
 }
 
-.property-details {
-  padding: 1rem;
-}
-
-.add-property-button,
 .notification-button {
-  background-color: #2c7a7b;
-  color: white;
-  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
   border: none;
-  border-radius: 8px;
-  text-decoration: none;
+  color: white;
   cursor: pointer;
+  font-size: 1rem;
 }
 
-.notification-button {
-  border-radius: 50%;
-  padding: 0.5rem;
+.phone-icon {
+  margin-right: 0.5rem;
 }
 
-.tenant-info {
-  padding: 1rem;
-  background-color: #f0f4f8;
-  border-radius: 8px;
-  margin: 1rem;
-}
 
-/* bottom nav bar */
 /* Bottom Navigation Bar Styling */
 #bottomNav {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
+  /* Ensure the navbar is on top */
 }
 
 .bottom-nav {
-  /* margin-left: 17vh; */
-  border-radius: 3vh;
+  border-radius: 12px;
+  /* Rounded corners */
   display: flex;
   justify-content: space-around;
   align-items: center;
   position: fixed;
-  bottom: 5vh;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 80%;
-  background-color: #2c7a7b;
-  padding: 0.5rem 0;
+  max-width: 600px;
+  /* Limit the maximum width */
+  background-color: #2a2e32;
+  /* Dark background similar to Bolt */
+  padding: 12px 0;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  transition: 0.3s ease;
+  /* Subtle shadow */
+  transition: padding 0.3s ease;
+  /* Transition effect */
 }
 
 .bottom-nav:hover {
-  padding: 2vh;
+  padding: 16px 0;
+  /* Increase padding on hover */
 }
 
 .nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: #ffffff;
+  /* White text color */
   text-decoration: none;
-  transition: transform 1s ease;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  /* Indicate that the items are clickable */
+  pointer-events: auto;
+  /* Ensure pointer events are enabled */
 }
-.nav-item:active{
-  position: relative;
-  bottom: 10vh;
-    background-color: #00a2a5;
-    border-radius: 50%;
-    width: 10vh;
-    height: 10vh;
-   align-items: center;
-   justify-content: center;
-    z-index: 1000;
-    box-shadow: 0px 5px 20px #282c34;
-    transform: translateY(-5px);
-     
+
+.nav-item:active {
+  background-color: #3e4348;
+  /* Darker background on active */
+  border-radius: 20%;
+  /* Circular effect on active */
+  padding: 12px;
 }
 
 .nav-item span {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
+  margin-top: 4px;
+  /* Adjust spacing */
+  font-size: 12px;
+  /* Smaller font size */
+}
+
+/* Home Page */
+.home {
+  padding: 20px;
+}
+.home h2{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00b140;
+}
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  background-color: #ffffff;
+  /* White background for cards */
+  border: 1px solid #d3d4d6;
+  /* Light border color */
+  border-radius: 8px;
+  text-decoration: none;
+  color: #000000;
+  /* Darker text color */
+  transition: background-color 0.3s;
+}
+
+.summary-card:hover {
+  background-color: #f0f1f2;
+  /* Light gray background on hover */
+}
+
+.card-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+  color: #00b140;
+  /* Bolt green color for icons */
+}
+
+
+/* maintenance */
+/* Maintenance Form Styling */
+.maintenance-page {
+  
+  max-width: 80%;
+  margin: 5vh auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.maintenance-page h2 {
+  text-align: center;
+  color: #333333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #666666;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 90%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  margin-bottom: 3vh;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2c7a7b;
+  /* Highlight color */
+}
+
+.submit-button {
+  margin-top: 6vh;
+  background-color: #212121;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #212121;
+  /* Darker shade on hover */
+}
+
+/* profile */
+/* Profile Page Styling */
+
+.profile-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.profile-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 3vh;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  /* margin-top: 20px; */
+}
+
+.profile-details {
+  text-align: center;
+}
+
+.profile-details h2 {
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.profile-details p {
+  color: #666666;
+  font-size: 1.2rem;
+}
+
+
+/* payment page */
+.payments-page {
+  padding: 20px;
+}
+
+.payments-table {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.payments-table h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.payments-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.payments-table th,
+.payments-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.payments-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.payments-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.payments-table tbody tr:hover {
+  background-color: #f0f0f0;
 }
