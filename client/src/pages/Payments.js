@@ -1,37 +1,48 @@
-
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import PropertyDetails from '../components/PropertyDetails';
 
-const PropertyPage = ({ match }) => {
-  const propertyId = match.params.id;
-  const [property, setProperty] = useState(null);
+
+const Payments = () => {
+  const [payments, setPayments] = useState([]);
 
   useEffect(() => {
-    // Fetch property data from an API or a database
+    // Fetch payments data from an API or a database
     // Replace the following code with your own API call
-    fetch(`https://api.example.com/properties/${propertyId}`)
+    fetch(`https://api.example.com/payments`)
       .then(response => response.json())
-      .then(data => setProperty(data))
+      .then(data => setPayments(data))
       .catch(error => console.error(error));
-  }, [propertyId]);
-
-  if (!property) {
-    return <div>Just a Sec...</div>;
-  }
+  }, []);
 
   return (
-    <div className="property-page">
-      <Header />
-      <PropertyDetails property={property} />
-      <div className="tenant-info">
-        <h3>Current Tenant</h3>
-        <p>Last Rent Payment: {property.lastRentPayment}</p>
-        <h3>Expenses</h3>
-        <p>{property.expenses.description}: ${property.expenses.amount} on {property.expenses.date}</p>
+    <div className="payments-page">
+      <div className="payments-table">
+        <h2>Payments</h2>
+
+        {payments.length === 0 ? (
+          <div>Loading payments...</div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payments.map(payment => (
+                <tr key={payment.id}>
+                  <td>{payment.date}</td>
+                  <td>${payment.amount}</td>
+                  <td>{payment.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 };
 
-export default PropertyPage;
+export default Payments;
