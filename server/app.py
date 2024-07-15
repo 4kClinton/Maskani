@@ -1,150 +1,199 @@
-import random
-from flask import Flask, request, jsonify
-from flask_bcrypt import Bcrypt
-from datetime import timedelta
-from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from models import db, User, Tenant, Payment
+from flask import Flask, request, make_response, jsonify, session
+from flask_restful import Api, Resource
+from flask_jwt_extended import (
+    JWTManager, create_access_token, get_jwt_identity,
+    current_user, jwt_required
+)
+from config import db, app
+from models import User, Tenant, Payment, Property, Maintenance
 
-
-app  = Flask(__name__)
-CORS(app)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///maskani.db" # postgres
-app.config["JWT_SECRET_KEY"] = "fsbdgfnhgvjnvhmvh"+str(random.randint(1,1000000000000)) 
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
-app.config["SECRET_KEY"] = "JKSRVHJVFBSRDFV"+str(random.randint(1,1000000000000))
-
-bcrypt = Bcrypt(app)
+app.config["JWT_SECRET_KEY"] = "super-secret-key"  # Ideally, use environment variables
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
 jwt = JWTManager(app)
+api = Api(app)
 
-#login
-@app.route("/login", methods=["POST"])
-def login():
-  full_name = request.json.get('full_name', None)
-  password = request.json.get('password', None)
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.id
 
-  user = User.query.filter_by(full_name=full_name).first()
-  if user and bcrypt.check_password_hash(user.password, password):
-    access_token = create_access_token(identity=user.id)
-    return jsonify({"access_token": access_token}), 200
-  else:
-    return jsonify({"error": "Invalid credentials"}), 401
-  
-#Fetch current user
-@app.route("/current_user", methods=["GET"])
-@jwt_required()
-def current_user():
-  current_user_id =  get_jwt_identity()
-  current_user = User.query.get(current_user_id)
-  if current_user:
-        return jsonify({"id":current_user.id, "full_name":current_user.full_name, "email":current_user.email}), 200
-  else:
-        jsonify({"error":"User not found"}), 404
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(id=identity).one_or_none()
 
-#logout
-BLACKLIST = set()
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blocklist(jwt_header, decrypted_token):
-    return decrypted_token['jti'] in BLACKLIST
+class Home(Resource):
+    def get(self):
+        return {"message": "Welcome to Maskani"}
 
-@app.route("/logout", methods=["POST"])
-@jwt_required()
-def logout():
-    jti = get_jwt_identity()
-    BLACKLIST.add(jti)
-    return jsonify({"message": "Logged out"}), 200
+api.add_resource(Home, '/')
 
-#add user
-@app.route('/users', methods=['POST'])
-def create_user():
-    data = request.get_json()
-    new_user = User(full_name=data['full_name'], email=data['email'], phone_number =data['phone_number'], password=bcrypt.generate_password_hash( data['password'] ).decode("utf-8") ) 
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'success': 'User created successfully'}), 201
+class Signup(Resource):
+    def post(self):
+        data = request.get_json()
+        full_name = data.get('full_name')
+        email = data.get('email')
+        phone_number = data.get('phone_number')
+        password = data.get('password')
 
-# Get single user
-@app.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify({'id': user.id, 'full_name': user.full_name, 'email': user.email, 'phone_number': user.phone_number})
+        user = User.query.filter_by(email=email).first()
 
-# Update user
-@app.route('/users/<int:user_id>', methods=['PUT'])
-@jwt_required()
-def update_user(user_id):
-    user = User.query.get_or_404(user_id)
-    data = request.get_json()
+        if not user:
+            user = User(full_name, email, phone_number, password)
+            db.session.add(user)
+            db.session.commit()
 
-    user.full_name = data['full_name']
-    user.email = data['email']
-    user.phone_number = data['phone_number']
-    db.session.commit()
-    return jsonify({'message': 'User updated successfully'})
+            access_token = create_access_token(identity=user.id)
+            return make_response({"user": user.to_dict(), 'access_token': access_token}, 201)
+        else:
+            return make_response({"error": "User already exists"}, 400)
+    
+api.add_resource(Signup, '/signup')
 
-# Delete user
-@app.route('/users/<int:user_id>', methods=['DELETE'])
-@jwt_required()
-def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({'message': 'User deleted successfully'})
+class Login(Resource):
+    def post(self):
+        data = request.get_json()
+        user = User.query.filter_by(email=data.get('email')).first()
 
-#Tenant
-#add Tenant
-@app.route('/tenants', methods=['POST'])
-@jwt_required()
-def create_tenant():
-    data = request.get_json()
-    new_tenant = Tenant(name=data['name'], phone_number=data['number'], id_number=data['id_number'], house_number=data['house_number'], user_id=get_jwt_identity()) 
-    db.session.add(new_tenant)
-    db.session.commit()
-    return jsonify({'success': 'Tenant created successfully'}), 201
+        if user and user.authenticate(data.get('password')):
+            access_token = create_access_token(identity=user)
+            return make_response({"user": user.to_dict(), 'access_token': access_token}, 200)
+        else:
+            return make_response({'error': "Invalid email or password"}, 401)
+    
+api.add_resource(Login, '/login')
 
-# Get single tenant
-@app.route('/tenants/<int:tenant_id>', methods=['GET'])
-@jwt_required()
-def get_tenant(tenant_id):
-    tenant = Tenant.query.get_or_404(tenant_id)
-    return jsonify({'id': tenant.id, 'name': tenant.name, 'phone_number': tenant.phone_number, 'id_number': tenant.id_number, 'house_number': tenant.house_number, 'user_id': tenant.user_id})
+class CheckSession(Resource):
+    @jwt_required()
+    def get(self):
+        return make_response(current_user.to_dict(), 200)
+     
+api.add_resource(CheckSession, '/check_session')
 
-# Update tenant
-@app.route('/tenants/<int:tenant_id>', methods=['PUT'])
-@jwt_required()
-def update_tenant(tenant_id):
-    tenant = Tenant.query.get_or_404(tenant_id)
-    data = request.get_json()
+class Logout(Resource):
+    @jwt_required()
+    def post(self):
+        session.clear()
+        return make_response({"message": "Logged out successfully"}, 200)
 
-    tenant.name = data['name']
-    tenant.phone_number = data['phone_number']
-    tenant.id_number = data['id_number']
-    tenant.house_number = data['house_number']
-    db.session.commit()
-    return jsonify({'message': 'Tenant updated successfully'})
+api.add_resource(Logout, '/logout')
 
-#Delete tenant
-@app.route('/tenants/<int:tenant_id>', methods=['DELETE'])
-@jwt_required()
-def delete_tenant(tenant_id):
-    tenant = Tenant.query.get_or_404(tenant_id)
-    db.session.delete(tenant)
-    db.session.commit()
-    return jsonify({'message': 'Tenant deleted successfully'})
+class TenantResource(Resource):
+    def get(self):
+        tenants = [tenant.to_dict() for tenant in Tenant.query.all()]
+        return make_response(jsonify(tenants), 200)
 
-#Payment
+    def post(self):
+        data = request.get_json()
+        tenant = Tenant(
+            name=data.get('name'),
+            phone_number=data.get('phone_number'),
+            id_number=data.get('id_number'),
+            house_number=data.get('house_number'),
+            user_id=data.get('user_id')
+        )
+        db.session.add(tenant)
+        db.session.commit()
+        return make_response(tenant.to_dict(), 201)
 
+    def patch(self, id):
+        tenant = Tenant.query.get_or_404(id)
+        data = request.get_json()
+        tenant.name = data.get('name', tenant.name)
+        tenant.phone_number = data.get('phone_number', tenant.phone_number)
+        tenant.id_number = data.get('id_number', tenant.id_number)
+        tenant.house_number = data.get('house_number', tenant.house_number)
+        db.session.commit()
+        return make_response(tenant.to_dict(), 200)
 
+    def delete(self, id):
+        tenant = Tenant.query.get_or_404(id)
+        db.session.delete(tenant)
+        db.session.commit()
+        return make_response({"message": "Tenant deleted successfully"}, 200)
 
+api.add_resource(TenantResource, '/tenants', '/tenants/<int:id>')
 
+class PaymentResource(Resource):
+    def get(self):
+        payments = [payment.to_dict() for payment in Payment.query.all()]
+        return make_response(jsonify(payments), 200)
 
+    def post(self):
+        data = request.get_json()
+        payment = Payment(
+            date_payed=data.get('date_payed'),
+            amount=data.get('amount'),
+            amount_due=data.get('amount_due'),
+            user_id=data.get('user_id'),
+            tenant_id=data.get('tenant_id')
+        )
+        db.session.add(payment)
+        db.session.commit()
+        return make_response(payment.to_dict(), 201)
 
+    def delete(self, id):
+        payment = Payment.query.get_or_404(id)
+        db.session.delete(payment)
+        db.session.commit()
+        return make_response({"message": "Payment deleted successfully"}, 200)
 
+api.add_resource(PaymentResource, '/payments', '/payments/<int:id>')
 
+class PropertyResource(Resource):
+    def get(self):
+        properties = [property.to_dict() for property in Property.query.all()]
+        return make_response(jsonify(properties), 200)
 
+    def post(self):
+        data = request.get_json()
+        property = Property(
+            name=data.get('name'),
+            location=data.get('location'),
+            owner=data.get('owner'),
+            image=data.get('image'),
+            user_id=data.get('user_id')
+        )
+        db.session.add(property)
+        db.session.commit()
+        return make_response(property.to_dict(), 201)
 
+api.add_resource(PropertyResource, '/properties', '/properties/<int:id>')
 
+class MaintenanceResource(Resource):
+    def get(self):
+        maintenances = [maintenance.to_dict() for maintenance in Maintenance.query.all()]
+        return make_response(jsonify(maintenances), 200)
 
-if __name__ == "__main__":
+    def post(self):
+        data = request.get_json()
+        maintenance = Maintenance(
+            issue_type=data.get('issue_type'),
+            description=data.get('description'),
+            date_created=data.get('date_created'),
+            contact_information=data.get('contact_information'),
+            tenant_id=data.get('tenant_id')
+        )
+        db.session.add(maintenance)
+        db.session.commit()
+        return make_response(maintenance.to_dict(), 201)
+
+    def patch(self, id):
+        maintenance = Maintenance.query.get_or_404(id)
+        data = request.get_json()
+        maintenance.issue_type = data.get('issue_type', maintenance.issue_type)
+        maintenance.description = data.get('description', maintenance.description)
+        maintenance.date_created = data.get('date_created', maintenance.date_created)
+        maintenance.contact_information = data.get('contact_information', maintenance.contact_information)
+        db.session.commit()
+        return make_response(maintenance.to_dict(), 200)
+
+    def delete(self, id):
+        maintenance = Maintenance.query.get_or_404(id)
+        db.session.delete(maintenance)
+        db.session.commit()
+        return make_response({"message": "Maintenance deleted successfully"}, 200)
+
+api.add_resource(MaintenanceResource, '/maintenances', '/maintenances/<int:id>')
+
+if __name__ == '__main__':
     app.run(debug=True)
-
