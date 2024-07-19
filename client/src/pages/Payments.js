@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import BottomNavBar from '../components/BottomNavbar';
+import Header from '../components/Header';
 
 
 const Payments = () => {
@@ -7,7 +9,7 @@ const Payments = () => {
   useEffect(() => {
     // Fetch payments data from an API or a database
     // Replace the following code with your own API call
-    fetch(`https://api.example.com/payments`)
+    fetch(`http://127.0.0.1:5000/payments`)
       .then(response => response.json())
       .then(data => setPayments(data))
       .catch(error => console.error(error));
@@ -15,6 +17,7 @@ const Payments = () => {
 
   return (
     <div className="payments-page">
+      <Header />
       <div className="payments-table">
         <h2>Payments</h2>
 
@@ -41,6 +44,7 @@ const Payments = () => {
           </table>
         )}
       </div>
+      <BottomNavBar />
     </div>
   );
 };

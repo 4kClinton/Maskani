@@ -1,19 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home as ListAlt, AddCircle, Build, Person } from '@mui/icons-material';
-
+import { Home as ListAlt, Build, Person , Payment } from '@mui/icons-material';
+import BottomNavBar from '../components/BottomNavbar';
+import Header from '../components/Header';
 
 const Home = () => {
   const cards = [
     { path: "/property", icon: <ListAlt />, label: "Our Properties" },
-    { path: "/payments", icon: <AddCircle />, label: "Payments" },
+    { path: "/payments", icon: <Payment />, label: "Payments" },
     { path: "/maintenance", icon: <Build />, label: "Maintenance" },
     { path: "/profile", icon: <Person />, label: "Profile" },
   ];
 
   return (
+    
     <div className="home">
-      <h2>Summary</h2>
+      <Header />
+      <h2>Dashboard</h2>
       <div className="card-list">
         {cards.map((card, index) => (
           <Link to={card.path} key={index} className="summary-card">
@@ -23,6 +26,7 @@ const Home = () => {
         ))}
       </div>
       {/* <FloatingButton />  floating button */}
+      <BottomNavBar />
     </div>
   );
 };

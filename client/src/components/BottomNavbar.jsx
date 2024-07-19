@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home as HomeIcon, AddCircle, Build, Person } from '@mui/icons-material';
+import { Home as HomeIcon, Build, Person , Payment} from '@mui/icons-material';
 
 const BottomNavBar = () => {
   const handleClick = (label) => {
@@ -15,7 +15,7 @@ const BottomNavBar = () => {
           <span>Home</span>
         </Link>
         <Link to="/payments" className="nav-item" onClick={() => handleClick('Payments')}>
-          <AddCircle />
+          <Payment />
           <span>Payments</span>
         </Link>
         <Link to="/maintenance" className="nav-item" onClick={() => handleClick('Maintenance')}>
