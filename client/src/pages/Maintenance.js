@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 // Toast Component
 import { ToastContainer, toast ,Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import BottomNavBar from '../components/BottomNavbar';
+import Header from '../components/Header';
 
 const Maintenance = () => {
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ transition: Bounce,
 
   return (
     <div className="maintenance-page">
-     
+      <Header />
       <h2>Report an Issue</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -85,6 +86,7 @@ transition: Bounce,
         <button type="submit" className='submit-button' onClick={notifySuccess}>Submit</button>
       </form>
       <ToastContainer />
+      <BottomNavBar />
     </div>
   );
 };

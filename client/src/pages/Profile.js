@@ -1,5 +1,6 @@
 import React from 'react';
-
+import BottomNavBar from '../components/BottomNavbar';
+import Header from '../components/Header';
 
 export default function Profile() {
     // Example user data (replace with actual user data)
@@ -10,6 +11,7 @@ export default function Profile() {
 
     return (
         <div className="profile-page">
+            <Header />
             {/* <h1>Profile Page</h1> */}
             <div className="profile-card">
                 <div className="profile-details">
@@ -18,6 +20,7 @@ export default function Profile() {
                 </div>
             </div>
             {/* Additional profile content */}
+            <BottomNavBar />
         </div>
     );
 }

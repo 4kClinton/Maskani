@@ -324,3 +324,180 @@ textarea:focus {
 .payments-table tbody tr:hover {
   background-color: #f0f0f0;
 }
+
+/* signup */
+
+/* src/components/Auth/Register.css */
+
+.container {
+  max-width: 60%;
+  margin: 0 auto;
+  padding: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit-button {
+  width: 30%;
+  padding: 0.75rem;
+  font-size: 1.25rem;
+  background-color: #212121;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #00b140;
+}
+
+/* admin nav */
+
+/* BottomNav.css */
+.admin-bottom-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  height: 8vh;
+  position: fixed;
+  bottom: 5vh;
+  background-color: #212121;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 3vh;
+  z-index: 1000;
+  
+}
+
+.bottom-navigation-action {
+  color: #6c757d;
+}
+
+.bottom-navigation-action.Mui-selected {
+  color: #007bff;
+}
+
+
+/* landing */
+/* src/LandingPage.css */
+.landing-page {
+  text-align: center;
+  padding: 20px;
+}
+
+.landing-page h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.landing-page h5 {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+}
+
+.landing-page-button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+}
+
+/* login.css */
+/* body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  
+  margin: 0;
+} */
+
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.btn{
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 30%;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}
+
+/* login */
+.login-container{
+  margin-top: 15vh;
+}

@@ -43,7 +43,7 @@ class Signup(Resource):
             db.session.commit()
 
             access_token = create_access_token(identity=user.id)
-            return make_response({"user": user.to_dict(), 'access_token': access_token}, 201)
+            return make_response(jsonify({"user": user.to_dict(), 'access_token': access_token}), 201)
         else:
             return make_response({"error": "User already exists"}, 400)
     
