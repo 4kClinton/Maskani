@@ -42,8 +42,11 @@ transition: Bounce,
   }
 
   return (
+    <>
+    
+     <Header />
     <div className="maintenance-page">
-      <Header />
+     
       <h2>Report an Issue</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -88,6 +91,9 @@ transition: Bounce,
       <ToastContainer />
       <BottomNavBar />
     </div>
+    
+    </>
+    
   );
 };
 

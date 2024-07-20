@@ -19,6 +19,8 @@ import Settings from './Admin/Settings';
 import AdminLanding from './Admin/AdminLanding'; // Import AdminLanding
 import Admin from './pages/Landlord';
 import LandingPage from './pages/MaskaniLanding'; // Import LandingPage
+import AdminLogin from './pages/AdminLogin';
+
 
 function App() {
   return (
@@ -33,15 +35,17 @@ function App() {
         <Route path="/property" element={<Property />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
         
         {/* Admin routes */}
         <Route path="/admin" element={<Admin />}>
-          <Route index element={<AdminLanding />} />
+          {/* <Route index element={<AdminLanding />} /> */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="properties" element={<Properties />} />
           <Route path="tenants" element={<Tenants />} />
           <Route path="rent" element={<Rent />} />
           <Route path="settings" element={<Settings />} />
+          
         </Route>
       </Routes>
       {/* <BottomNavBar /> */}

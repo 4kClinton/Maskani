@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 
-const Payments = () => {
+const Rent = () => {
   const payments = [
     { id: 1, tenant: 'John Doe', amount: 1000, date: '2024-07-01' },
     // Add more payments as needed
@@ -37,4 +37,4 @@ const Payments = () => {
   );
 };
 
-export default Payments;
+export default Rent;

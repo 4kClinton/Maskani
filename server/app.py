@@ -13,6 +13,8 @@ app.config['JWT_TOKEN_LOCATION'] = ['headers']
 jwt = JWTManager(app)
 api = Api(app)
 
+
+
 @jwt.user_identity_loader
 def user_identity_lookup(user):
     return user.id
@@ -216,18 +218,33 @@ api.add_resource(Properties, '/properties', '/properties/<int:property_id>')
 
 # Payment information
 class Payments(Resource):
-    def get(self):
-        payments = Payment.query.all()
-        payments_list = [{
-            'id': payment.id,
-            'date_payed': payment.date_payed,
-            'amount': payment.amount,
-            'amount_due': payment.amount_due,
-            'user_id': payment.user_id,
-            'tenant_id': payment.tenant_id,
-            'admin_id': payment.admin_id 
-        } for payment in payments]
-        return make_response(jsonify(payments_list), 200)
+    def get(self, payment_id=None):
+        if payment_id is None:
+            # Return list of all payments
+            payments = Payment.query.all()
+            payments_list = [{
+                'id': payment.id,
+                'date_payed': payment.date_payed,
+                'amount': payment.amount,
+                'amount_due': payment.amount_due,
+                'user_id': payment.user_id,
+                'tenant_id': payment.tenant_id,
+                'admin_id': payment.admin_id 
+            } for payment in payments]
+            return make_response(jsonify(payments_list), 200)
+        else:
+            # Return a specific payment
+            payment = Payment.query.get_or_404(payment_id)
+            payment_dict = {
+                'id': payment.id,
+                'date_payed': payment.date_payed,
+                'amount': payment.amount,
+                'amount_due': payment.amount_due,
+                'user_id': payment.user_id,
+                'tenant_id': payment.tenant_id,
+                'admin_id': payment.admin_id,
+            }
+            return make_response(jsonify(payment_dict), 200)
 
     def get(self, payment_id):
         payment = Payment.query.get_or_404(payment_id)
