@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import BottomNavBar from '../components/BottomNavbar';
 import Header from '../components/Header';
-
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box } from '@mui/material';
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch payments data from an API or a database
-    // Replace the following code with your own API call
-    fetch(`http://127.0.0.1:5000/payments`)
+    fetch('http://127.0.0.1:5600/payments')
       .then(response => response.json())
-      .then(data => setPayments(data))
-      .catch(error => console.error(error));
+      .then(data => {
+        setPayments(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching payments:', error);
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -20,28 +26,31 @@ const Payments = () => {
       <Header />
       <div className="payments-table">
         <h2>Payments</h2>
-
-        {payments.length === 0 ? (
-          <div>Loading payments...</div>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <CircularProgress />
+          </Box>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payments.map(payment => (
-                <tr key={payment.id}>
-                  <td>{payment.date}</td>
-                  <td>${payment.amount}</td>
-                  <td>{payment.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {payments.map(payment => (
+                  <TableRow key={payment.id}>
+                    <TableCell>{payment.date_payed}</TableCell>
+                    <TableCell>${payment.amount}</TableCell>
+                    <TableCell>{/* Status could be inferred or added in the API */}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </div>
       <BottomNavBar />

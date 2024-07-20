@@ -16,7 +16,7 @@ const BottomNav = () => {
   const routes = [
     '/admin/dashboard',
     '/admin/tenants',
-    '/admin/payments',
+    '/admin/rent',
     '/admin/properties',
     '/admin/settings',
   ];

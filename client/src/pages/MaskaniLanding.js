@@ -23,7 +23,7 @@ const LandingPage = () => {
             onClick={() => navigate('/login')}
             className="landing-page-button"
           >
-            Login
+            Login as Tenant
           </Button>
           <Button
             variant="outlined"
@@ -33,6 +33,15 @@ const LandingPage = () => {
             style={{ marginLeft: '16px' }}
           >
             Sign Up
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => navigate('/admin-login')}
+            className="landing-page-button"
+            style={{ marginLeft: '16px' }}
+          >
+            Login as Admin
           </Button>
         </Box>
       </Box>
