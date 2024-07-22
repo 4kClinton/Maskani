@@ -14,11 +14,11 @@ const BottomNav = () => {
   const navigate = useNavigate();
 
   const routes = [
-    '/admin/dashboard',
-    '/admin/tenants',
-    '/admin/rent',
-    '/admin/properties',
-    '/admin/settings',
+    '/Maskani/admin/dashboard',
+    '/Maskani/admin/tenants',
+    '/Maskani/admin/rent',
+    '/Maskani/admin/properties',
+    '/Maskani/admin/settings',
   ];
 
   const handleChange = (event, newValue) => {

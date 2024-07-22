@@ -4,13 +4,37 @@ import { TextField,} from '@mui/material';
 // import './AdminLogin.css';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = () => {
     // Implement login logic here
-    navigate('/admin/dashboard'); // Redirect after successful login
+    //   const handleSubmit = (e) => {
+    // e.preventDefault();
+
+    fetch('https://maskani-backend-1.onrender.com//login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Server response:', data); // Log the response to inspect its structure
+        if (data.user) {
+          localStorage.setItem('token', data.access_token);
+          navigate('/Maskani/admin/dashboard');
+        } else {
+          alert('Invalid email or password');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  
+    navigate('/Maskani/admin/dashboard'); // Redirect after successful login
   };
 
   return (
@@ -23,13 +47,13 @@ const AdminLogin = () => {
           <span className="title">Admin Login</span>
           <div className="form-container">
             <TextField
-              label="Username"
+              label="Email"
               variant="outlined"
               fullWidth
               margin="normal"
               className="input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <TextField

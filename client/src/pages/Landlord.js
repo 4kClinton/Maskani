@@ -16,7 +16,7 @@ const Admin = () => {
       <Grid container spacing={3} className="admin-grid">
         <Grid item xs={12} sm={6} md={4}>
           <Paper 
-            onClick={() => navigate('/admin/dashboard')} 
+            onClick={() => navigate('/Maskani/admin/dashboard')} 
             elevation={3} 
             className="admin-paper"
           >
@@ -25,7 +25,7 @@ const Admin = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Paper 
-            onClick={() => navigate('/admin/properties')} 
+            onClick={() => navigate('/Maskani/admin/properties')} 
             elevation={3} 
             className="admin-paper"
           >
@@ -34,7 +34,7 @@ const Admin = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Paper 
-            onClick={() => navigate('/admin/tenants')} 
+            onClick={() => navigate('/Maskani/admin/tenants')} 
             elevation={3} 
             className="admin-paper"
           >
@@ -43,7 +43,7 @@ const Admin = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Paper 
-            onClick={() => navigate('/admin/rent')} 
+            onClick={() => navigate('/Maskani/admin/rent')} 
             elevation={3} 
             className="admin-paper"
           >
@@ -52,7 +52,7 @@ const Admin = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Paper 
-            onClick={() => navigate('/admin/settings')} 
+            onClick={() => navigate('/Maskani/admin/settings')} 
             elevation={3} 
             className="admin-paper"
           >

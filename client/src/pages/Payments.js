@@ -9,7 +9,7 @@ const Payments = () => {
 
   useEffect(() => {
     // Fetch payments data from an API or a database
-    fetch('http://127.0.0.1:5600/payments')
+    fetch('https://maskani-backend-1.onrender.com/payments')
       .then(response => response.json())
       .then(data => {
         setPayments(data);
@@ -35,10 +35,10 @@ const Payments = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Payment Id</TableCell>
                   <TableCell>Date Paid</TableCell>
-                  <TableCell>Amount </TableCell>
-                  <TableCell>Amount Due</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Amount Due </TableCell>
+                  {/* <TableCell>Amount Due</TableCell> */}
                   {/* <TableCell>Status</TableCell> */}
                 </TableRow>
               </TableHead>

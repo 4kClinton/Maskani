@@ -16,7 +16,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:5600/register', {
+      const response = await axios.post('https://maskani-backend-1.onrender.com/register', {
         full_name: fullName,
         email,
         phone_number: phoneNumber,
@@ -28,7 +28,7 @@ const Signup = () => {
       if (response.status === 201) {
         alert('Registration successful!');
       console.log('Registration successful!', Response.data);
-        navigate('/login');
+        if (role === "tenant") {navigate('/Maskani/login')} else{navigate('/Maskani/admin-login')};
       } else {
         setError(response.data.error);
       }
@@ -91,7 +91,7 @@ const Signup = () => {
             <button className="signup-button">Sign up</button>
           </form>
           <div className="form-section">
-            <p>Have an account? <a href="/login">Log in</a></p>
+            <p>Have an account? <a href="/Maskani/login">Log in</a></p>
           </div>
           {error && <div className="signup-error">{error}</div>}
         </div>
