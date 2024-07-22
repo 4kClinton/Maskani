@@ -392,7 +392,7 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   width: 80%;
-  height: 8vh;
+  height: 10vh;
   position: fixed;
   bottom: 5vh;
   background-color: #212121;
@@ -412,28 +412,38 @@ textarea:focus {
 
 
 /* landing */
-/* src/LandingPage.css */
+/* Landing Page Styles */
+
 .landing-page {
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
   text-align: center;
-  padding: 20px;
 }
 
-.landing-page h2 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
+.landing-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 16px;
+  box-shadow: 0 1px 2vh rgb(0, 76, 255);
 }
 
-.landing-page h5 {
-  font-size: 1.5rem;
-  margin-bottom: 40px;
+.landing-motto {
+  margin-top: 20vh;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  z-index: 1000;
 }
 
 .landing-page-button {
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 1.2rem;
+  margin-top: 16px;
 }
-
 /* login.css */
 /* body {
   font-family: Arial, sans-serif;
@@ -840,4 +850,52 @@ select {
   margin-top: 16px;
   color: red;
   font-size: 0.9rem;
+}
+/* admin rents page */
+
+/* Unique Admin Page Styles */
+
+.admin-container {
+  margin-top: 50px;
+}
+
+.admin-title {
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: bold;
+  color: #333;
+}
+
+.admin-grid {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  
+  padding: 20px;
+}
+
+.admin-paper {
+  /* height: 10vh; */
+  padding: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(135deg, #ffffff, #f1f7fe);
+  border-radius: 8px;
+}
+
+.admin-paper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.admin-paper h5 {
+  color: #0066ff;
+  margin: 0;
+}
+
+.lastlast{
+  margin-top:30vh;
 }

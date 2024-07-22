@@ -26,6 +26,8 @@ const Signup = () => {
       });
 
       if (response.status === 201) {
+        alert('Registration successful!');
+      console.log('Registration successful!', Response.data);
         navigate('/login');
       } else {
         setError(response.data.error);
@@ -61,7 +63,7 @@ const Signup = () => {
                 required
               />
               <input
-                type="text"
+                type="number"
                 className="input"
                 placeholder="Phone Number"
                 value={phoneNumber}
