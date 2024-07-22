@@ -15,7 +15,7 @@ const Dashboard = () => {
         <Grid item xs={12} sm={4}>
           <Paper className="dashboard-paper">
             <Typography className="dashboard-title" variant="h6">Total Payments</Typography>
-            <Typography className="dashboard-value" variant="h4">$10,000</Typography>
+            <Typography className="dashboard-value" variant="h4">Ksh 26,000,000</Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={4}>

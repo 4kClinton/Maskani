@@ -35,9 +35,11 @@ const Payments = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Amount</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell>Payment Id</TableCell>
+                  <TableCell>Date Paid</TableCell>
+                  <TableCell>Amount </TableCell>
+                  <TableCell>Amount Due</TableCell>
+                  {/* <TableCell>Status</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -45,7 +47,7 @@ const Payments = () => {
                   <TableRow key={payment.id}>
                     <TableCell>{payment.date_payed}</TableCell>
                     <TableCell>${payment.amount}</TableCell>
-                    <TableCell>{/* Status could be inferred or added in the API */}</TableCell>
+                    <TableCell>{payment.amount_due}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
