@@ -27,7 +27,7 @@ const LandingPage = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/Maskani/login')}
             className="landing-page-button"
           >
             Login as Tenant
@@ -35,7 +35,7 @@ const LandingPage = () => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/Maskani/signup')}
             className="landing-page-button"
             style={{ marginLeft: '16px' }}
           >
@@ -44,7 +44,7 @@ const LandingPage = () => {
           <Button
             variant="outlined"
             color="secondary"
-            onClick={() => navigate('/admin-login')}
+            onClick={() => navigate('/Maskani/admin-login')}
             className="landing-page-button"
             style={{ marginLeft: '16px' }}
           >

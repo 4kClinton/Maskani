@@ -11,7 +11,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://127.0.0.1:5600/login', {
+    fetch('https://maskani-backend-1.onrender.com//login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,9 +21,9 @@ const Login = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log('Server response:', data); // Log the response to inspect its structure
-        if (data.success) {
+        if (data.user) {
           localStorage.setItem('token', data.access_token);
-          navigate('/home');
+          navigate('/Maskani/home');
         } else {
           alert('Invalid email or password');
         }
@@ -61,7 +61,7 @@ const Login = () => {
             <button type="submit">Login</button>
           </form>
           <div className="form-section">
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+            <p>Don't have an account? <a href="/Maskani/signup">Sign up</a></p>
           </div>
         </div>
       </div>

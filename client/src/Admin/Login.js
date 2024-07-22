@@ -11,10 +11,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:5000/login', { email, password });
+      const response = await axios.post('https://maskani-backend-1.onrender.com/login', { email, password });
       if (response.status === 200) {
         alert('Login successful!');
-        navigate('/home');  // Navigate to the home page after successful login
+        navigate('/Maskani/home');  // Navigate to the home page after successful login
       } else {
         alert('Login failed!');
       }
