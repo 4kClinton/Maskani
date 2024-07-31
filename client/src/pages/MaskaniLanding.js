@@ -1,4 +1,3 @@
-// src/LandingPage.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Button, Box } from '@mui/material';
@@ -16,23 +15,40 @@ const LandingPage = () => {
         <Typography variant="h5" gutterBottom>
           Your ultimate rental property management system
         </Typography>
+        <img
+          src={`${process.env.PUBLIC_URL}/tech-real-estate.jpeg`}
+          alt="Tech meets Real estate"
+          className="landing-image"
+        />
+        <Typography variant="h6" className="landing-motto">
+          Where Tech Meets Real Estate
+        </Typography>
         <Box mt={4}>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/Maskani/login')}
             className="landing-page-button"
           >
-            Login
+            Login as Tenant
           </Button>
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/Maskani/signup')}
             className="landing-page-button"
             style={{ marginLeft: '16px' }}
           >
             Sign Up
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => navigate('/Maskani/admin-login')}
+            className="landing-page-button"
+            style={{ marginLeft: '16px' }}
+          >
+            Login as Admin
           </Button>
         </Box>
       </Box>

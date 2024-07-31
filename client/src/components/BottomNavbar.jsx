@@ -10,19 +10,19 @@ const BottomNavBar = () => {
   return (
     <div id='bottomNav'>
       <nav className="bottom-nav">
-        <Link to="/home" className="nav-item" onClick={() => handleClick('Home')}>
+        <Link to="/Maskani/home" className="nav-item" onClick={() => handleClick('Home')}>
           <HomeIcon />
           <span>Home</span>
         </Link>
-        <Link to="/payments" className="nav-item" onClick={() => handleClick('Payments')}>
+        <Link to="/Maskani/payments" className="nav-item" onClick={() => handleClick('Payments')}>
           <Payment />
           <span>Payments</span>
         </Link>
-        <Link to="/maintenance" className="nav-item" onClick={() => handleClick('Maintenance')}>
+        <Link to="/Maskani/maintenance" className="nav-item" onClick={() => handleClick('Maintenance')}>
           <Build />
           <span>Maintenance</span>
         </Link>
-        <Link to="/profile" className="nav-item" onClick={() => handleClick('Profile')}>
+        <Link to="/Maskani/profile" className="nav-item" onClick={() => handleClick('Profile')}>
           <Person />
           <span>Profile</span>
         </Link>

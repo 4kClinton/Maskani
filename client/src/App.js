@@ -16,32 +16,36 @@ import Properties from './Admin/Properties';
 import Tenants from './Admin/Tenants';
 import Rent from './Admin/Rent';
 import Settings from './Admin/Settings';
-import AdminLanding from './Admin/AdminLanding'; // Import AdminLanding
+// import AdminLanding from './Admin/AdminLanding'; // Import AdminLanding
 import Admin from './pages/Landlord';
 import LandingPage from './pages/MaskaniLanding'; // Import LandingPage
+import AdminLogin from './pages/AdminLogin';
+
 
 function App() {
   return (
     <div className="App">
       
       <Routes>
-        <Route exact path="/" element={<LandingPage />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/maintenance" element={<Maintenance />} />
-        <Route path="/property" element={<Property />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Register />} />
+        <Route exact path="/Maskani" element={<LandingPage />} />
+        <Route path="/Maskani/home" element={<Home />} />
+        <Route path="/Maskani/payments" element={<Payments />} />
+        <Route path="/Maskani/profile" element={<Profile />} />
+        <Route path="/Maskani/maintenance" element={<Maintenance />} />
+        <Route path="/Maskani/property" element={<Property />} />
+        <Route path="/Maskani/login" element={<Login />} />
+        <Route path="/Maskani/signup" element={<Register />} />
+        <Route path="/Maskani/admin-login" element={<AdminLogin />} />
         
         {/* Admin routes */}
-        <Route path="/admin" element={<Admin />}>
-          <Route index element={<AdminLanding />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="properties" element={<Properties />} />
-          <Route path="tenants" element={<Tenants />} />
-          <Route path="rent" element={<Rent />} />
-          <Route path="settings" element={<Settings />} />
+        <Route path="/Maskani/admin" element={<Admin />} >
+          {/* <Route path="/Maskani/admin/dashboard" element={<Admin />}> */}
+          <Route path="/Maskani/admin/dashboard" element={<Dashboard />} />
+          <Route path="/Maskani/admin/properties" element={<Properties />} />
+          <Route path="/Maskani/admin/tenants" element={<Tenants />} />
+          <Route path="/Maskani/admin/rent" element={<Rent />} />
+          <Route path="/Maskani/admin/settings" element={<Settings />} />
+          
         </Route>
       </Routes>
       {/* <BottomNavBar /> */}
