@@ -6,10 +6,10 @@ import Header from '../components/Header';
 
 const Home = () => {
   const cards = [
-    { path: "/property", icon: <ListAlt />, label: "Our Properties" },
-    { path: "/payments", icon: <Payment />, label: "Payments" },
-    { path: "/maintenance", icon: <Build />, label: "Maintenance" },
-    { path: "/profile", icon: <Person />, label: "Profile" },
+    { path: "/Maskani/property", icon: <ListAlt />, label: "Our Properties" },
+    { path: "/Maskani/payments", icon: <Payment />, label: "Payments" },
+    { path: "/Maskani/maintenance", icon: <Build />, label: "Maintenance" },
+    { path: "/Maskani/profile", icon: <Person />, label: "Profile" },
   ];
 
   return (
